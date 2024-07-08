@@ -23,7 +23,10 @@
       "softwareKeyboardLayoutMode": "pan",
       "windowSoftInputMode": "adjustPan",
       "jsEngine": "hermes",
-      "package": "com.mdibuhossain.filmlist"
+      "package": "com.mdibuhossain.filmlist",
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -49,6 +52,12 @@
       "eas": {
         "projectId": "aa4c223e-5c0d-45b2-8514-83650576628a"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/aa4c223e-5c0d-45b2-8514-83650576628a"
     }
   }
 }
