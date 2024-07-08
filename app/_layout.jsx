@@ -3,6 +3,7 @@ import { Slot, SplashScreen, Stack } from "expo-router";
 import { useFonts } from "expo-font";
 import { SafeAreaView } from "react-native-safe-area-context";
 import GlobalProvider from "../context/GlobalProvider";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -30,13 +31,15 @@ const RootLayout = () => {
 
   return (
     <GlobalProvider>
-      <SafeAreaView className="h-full bg-primary">
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="index" />
-          <Stack.Screen name="(auth)" />
-          <Stack.Screen name="(tabs)" />
-        </Stack>
-      </SafeAreaView>
+      <GestureHandlerRootView className="flex-1">
+        <SafeAreaView className="h-full bg-primary">
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" />
+            <Stack.Screen name="(auth)" />
+            <Stack.Screen name="(tabs)" />
+          </Stack>
+        </SafeAreaView>
+      </GestureHandlerRootView>
     </GlobalProvider>
   );
 };

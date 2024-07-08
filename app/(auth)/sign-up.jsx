@@ -10,36 +10,40 @@ import ScreenLayout from "../../components/ScreenLayout";
 import CustomInpurField from "../../components/CustomInpurField";
 import CustomButton from "../../components/CustomButton";
 import { images } from "../../constants";
-import { Link, router } from "expo-router";
+import { Redirect, router } from "expo-router";
 import { signUp } from "../../lib/firebaseService";
+import { useGlobalContext } from "../../context/GlobalProvider";
 
 const initialUserInfo = {
   email: "",
-  username: "",
+  fullName: "",
   password: "",
   passwordConfirmation: "",
 };
 
 const SignUp = () => {
   const [formPayload, setFormPayload] = React.useState(initialUserInfo);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoadingLocally, setIsLoadingLocally] = React.useState(false);
+  const { checkUser } = useGlobalContext();
 
-  const handleSignUp = () => {
+  const handleSignUp = async () => {
     if (formPayload.password !== formPayload.passwordConfirmation) {
       alert("Passwords do not match");
       return;
     }
-    setIsLoading(true);
+    setIsLoadingLocally(true);
     try {
-      const { loading, data } = signUp(
-        formPayload.username,
+      const { loading, data } = await signUp(
+        formPayload.fullName,
         formPayload.email,
         formPayload.password
       );
-      setIsLoading(loading);
-      router.replace("/sign-in");
+      setIsLoadingLocally(loading);
+      if (data) {
+        await checkUser();
+      }
     } catch (error) {
-      setIsLoading(false);
+      setIsLoadingLocally(false);
     }
   };
 
@@ -63,9 +67,9 @@ const SignUp = () => {
           <View className="w-full mt-6">
             <CustomInpurField
               type="text"
-              label="Enter username"
+              label="Enter Full Name"
               handleChangeText={(e) =>
-                setFormPayload({ ...formPayload, username: e })
+                setFormPayload({ ...formPayload, fullName: e })
               }
             />
             <CustomInpurField
@@ -94,13 +98,13 @@ const SignUp = () => {
             />
             <CustomButton
               containerStyle="h-10 justify-center items-center mt-5"
-              title={isLoading ? "Loading..." : "Sign up"}
+              title={isLoadingLocally ? "Loading..." : "Sign up"}
               handlePress={handleSignUp}
-              isLoading={isLoading}
+              isLoading={isLoadingLocally}
               isDisabled={
                 formPayload.password &&
                 formPayload.email &&
-                formPayload.username &&
+                formPayload.fullName &&
                 formPayload.passwordConfirmation
                   ? false
                   : true

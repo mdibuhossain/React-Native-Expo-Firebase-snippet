@@ -5,8 +5,10 @@ import logo from "../assets/images/logo.png";
 import path from "../assets/images/path.png";
 import profile from "../assets/images/profile.png";
 import thumbnail from "../assets/images/thumbnail.png";
+import spinning from "../assets/images/spinning.gif";
 
 export default {
+  spinning,
   cards,
   empty,
   logoSmall,

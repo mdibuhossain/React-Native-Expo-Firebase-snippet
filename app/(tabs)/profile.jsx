@@ -9,15 +9,20 @@ import {
 } from "../../lib/firebaseService";
 import { useGlobalContext } from "../../context/GlobalProvider";
 import ScreenLayout from "../../components/ScreenLayout";
-import { images } from "../../constants";
+import { images, svgs } from "../../constants";
 import CustomInpurField from "../../components/CustomInpurField";
 import FeatherIcons from "@expo/vector-icons/Feather";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import * as ImagePicker from "expo-image-picker";
+import { FlatList } from "react-native-gesture-handler";
 
 const Profile = () => {
   const { user, checkUser, isLoading, setUser } = useGlobalContext();
   const [newName, setNewName] = React.useState("");
+  const [isLoadingForPhoto, setIsLoadingForPhoto] = React.useState(false);
+  const [isLoadingForName, setIsLoadingForName] = React.useState(false);
+  const [isLoadingForEmailVerify, setIsLoadingForEmailVerify] =
+    React.useState(false);
 
   const handleUpdateFullName = async () => {
     try {
@@ -33,14 +38,18 @@ const Profile = () => {
   };
 
   const handleVerifyEmail = async () => {
+    setIsLoadingForEmailVerify(true);
     try {
       await verifyEmail();
     } catch (error) {
       alert(error.message);
+    } finally {
+      setIsLoadingForEmailVerify(false);
     }
   };
 
   const handleUpdateProfilePicture = async () => {
+    setIsLoadingForPhoto(true);
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -65,87 +74,163 @@ const Profile = () => {
           alert(error.message);
         });
     }
+    setIsLoadingForPhoto(false);
+  };
+
+  const signOut = async () => {
+    await logOut();
+    setUser(null);
   };
 
   return (
     <ScreenLayout>
       <View className="flex-1 items-center">
         <View className="absolute top-0 right-0">
-          <TouchableOpacity onPress={logOut}>
+          <TouchableOpacity onPress={signOut}>
             <FeatherIcons name="log-out" size={25} color="#FF9C01" />
           </TouchableOpacity>
         </View>
-        <View className="w-full items-center">
-          <View className="relative p-1 justify-center items-center rounded-full bg-gray-700">
-            <Image
-              className="w-20 h-20 rounded-full"
-              resizeMode="contain"
-              source={user?.photoURL ? { uri: user?.photoURL } : images.profile}
-            />
-            <TouchableOpacity
-              activeOpacity={0.7}
-              className="absolute right-0 bottom-0 bg-gray-700 rounded-full p-1"
-            >
-              <MaterialCommunityIcons
-                onPress={handleUpdateProfilePicture}
-                name="image-edit-outline"
-                color="#FF9C01"
-                size={20}
-              />
-            </TouchableOpacity>
-          </View>
-          <Text className="text-white text-base font-mPbold mt-2">
-            {isLoading ? "Loading..." : user?.displayName || "No name found"}
-          </Text>
-          <Text className="text-white text-xs font-mPregular">
-            {isLoading
-              ? "Loading..."
-              : `${user?.email}${user?.emailVerified ? " ✅" : " ❌"}`}
-          </Text>
-          {!user?.emailVerified && (
-            <CustomButton
-              title="Verify Email"
-              containerStyle="px-4 py-1 rounded-full mt-3 active:bg-red-600"
-              textStyle="text-white text-xs uppercase"
-              handlePress={handleVerifyEmail}
-            />
+        <FlatList
+          className="w-full"
+          ListHeaderComponent={() => (
+            <>
+              <View className="w-full items-center">
+                <View className="relative w-[90] h-[90] justify-center items-center rounded-full bg-gray-700">
+                  {isLoadingForPhoto ? (
+                    <Image
+                      className="w-16 h-16 rounded-full"
+                      resizeMode="contain"
+                      source={images.spinning}
+                    />
+                  ) : (
+                    <Image
+                      className="w-20 h-20 rounded-full"
+                      resizeMode="contain"
+                      source={
+                        user?.photoURL
+                          ? { uri: user?.photoURL }
+                          : images.profile
+                      }
+                    />
+                  )}
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    className="absolute right-0 bottom-0 bg-gray-700 rounded-full p-1"
+                  >
+                    <MaterialCommunityIcons
+                      onPress={handleUpdateProfilePicture}
+                      name="image-edit-outline"
+                      color="#FF9C01"
+                      size={20}
+                    />
+                  </TouchableOpacity>
+                </View>
+                <Text className="text-white text-base font-mPbold mt-2">
+                  {isLoading
+                    ? "Loading..."
+                    : user?.displayName || "No name found"}
+                </Text>
+                <Text className="text-white text-xs font-mPregular">
+                  {isLoading
+                    ? "Loading..."
+                    : `${user?.email}${user?.emailVerified ? " ✅" : " ❌"}`}
+                </Text>
+                {!user?.emailVerified && (
+                  <CustomButton
+                    title={
+                      isLoadingForEmailVerify ? "Loading..." : "Verify Email"
+                    }
+                    containerStyle="px-4 py-1 rounded-full mt-3 active:bg-red-600"
+                    textStyle="text-white text-xs uppercase"
+                    handlePress={handleVerifyEmail}
+                  />
+                )}
+              </View>
+              <View className="w-full">
+                <CustomInpurField
+                  value={newName}
+                  label="Full Name"
+                  containerStyle="mt-5"
+                  inputFieldContainerStyle="flex-1 focus:!border-secondary"
+                  handleChangeText={setNewName}
+                  GroupedButton={
+                    <CustomButton
+                      title="Update"
+                      containerStyle="justify-center items-center px-2 rounded-none active:bg-red-600"
+                      textStyle="text-white text-xs uppercase"
+                      handlePress={handleUpdateFullName}
+                    />
+                  }
+                />
+              </View>
+            </>
           )}
-        </View>
-        <View className="w-full">
-          <CustomInpurField
-            value={newName}
-            label="Full Name"
-            containerStyle="mt-5"
-            inputFieldContainerStyle="flex-1 focus:!border-secondary"
-            handleChangeText={setNewName}
-            GroupedButton={
-              <CustomButton
-                title="Update"
-                containerStyle="justify-center items-center px-2 rounded-none active:bg-red-600"
-                textStyle="text-white text-xs uppercase"
-                handlePress={handleUpdateFullName}
-              />
-            }
-          />
-        </View>
-        <View className="w-full flex-1 mt-5">
-          <ScrollView className="w-full">
+          data={[
+            {
+              title: "My Orders",
+              icon: svgs.orders,
+              onPress: () => {},
+            },
+            {
+              title: "My Address",
+              icon: svgs.address,
+              onPress: () => {},
+            },
+            {
+              title: "My Payment",
+              icon: svgs.payment,
+              onPress: () => {},
+            },
+            {
+              title: "My Wishlist",
+              icon: svgs.wishlist,
+              onPress: () => {},
+            },
+            {
+              title: "My Reviews",
+              icon: svgs.reviews,
+              onPress: () => {},
+            },
+            {
+              title: "My Coupons",
+              icon: svgs.coupons,
+              onPress: () => {},
+            },
+            {
+              title: "My Notifications",
+              icon: svgs.notifications,
+              onPress: () => {},
+            },
+            {
+              title: "My Settings",
+              icon: svgs.settings,
+              onPress: () => {},
+            },
+            {
+              title: "Sign Out",
+              icon: svgs.settings,
+              onPress: signOut,
+            },
+          ]}
+          renderItem={({ item }) => (
             <View>
               <TouchableOpacity
-                onPress={logOut}
+                onPress={item.onPress}
                 activeOpacity={0.7}
-                className="w-full p-2"
+                className="flex-row items-center justify-between py-3"
               >
-                <View>
-                  <Text className="text-gray-300 font-mPmedium text-lg">
-                    Sign out
+                <View className="flex-row items-center">
+                  {item.icon}
+                  <Text className="text-white text-base font-mPregular ml-3">
+                    {item.title}
                   </Text>
                 </View>
+                <FeatherIcons name="chevron-right" size={20} color="#FF9C01" />
               </TouchableOpacity>
               <View className="border-t border-gray-700 w-full" />
             </View>
-          </ScrollView>
-        </View>
+          )}
+        />
       </View>
     </ScreenLayout>
   );
