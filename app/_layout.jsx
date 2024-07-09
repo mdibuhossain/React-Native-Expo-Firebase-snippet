@@ -31,15 +31,15 @@ const RootLayout = () => {
 
   return (
     <GlobalProvider>
-      <GestureHandlerRootView className="flex-1">
-        <SafeAreaView className="h-full bg-primary">
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="index" />
-            <Stack.Screen name="(auth)" />
-            <Stack.Screen name="(tabs)" />
-          </Stack>
-        </SafeAreaView>
-      </GestureHandlerRootView>
+      {/* <GestureHandlerRootView className="flex-1"> */}
+      <SafeAreaView className="h-full bg-primary">
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="index" />
+          <Stack.Screen name="(auth)" />
+          <Stack.Screen name="(tabs)" />
+        </Stack>
+      </SafeAreaView>
+      {/* </GestureHandlerRootView> */}
     </GlobalProvider>
   );
 };

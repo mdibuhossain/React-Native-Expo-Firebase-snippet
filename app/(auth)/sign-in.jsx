@@ -52,6 +52,7 @@ const SignIn = () => {
         <View className="w-full mt-6">
           <CustomInpurField
             type="email"
+            value={formPayload.email}
             label="Your email"
             handleChangeText={(e) =>
               setFormPayload({ ...formPayload, email: e })
@@ -59,6 +60,7 @@ const SignIn = () => {
           />
           <CustomInpurField
             type="password"
+            value={formPayload.password}
             label="Your password"
             containerStyle="mt-2"
             handleChangeText={(e) =>

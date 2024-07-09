@@ -68,6 +68,7 @@ const SignUp = () => {
             <CustomInpurField
               type="text"
               label="Enter Full Name"
+              value={formPayload.fullName}
               handleChangeText={(e) =>
                 setFormPayload({ ...formPayload, fullName: e })
               }
@@ -76,6 +77,7 @@ const SignUp = () => {
               type="email"
               label="Enter email"
               containerStyle="mt-2"
+              value={formPayload.email}
               handleChangeText={(e) =>
                 setFormPayload({ ...formPayload, email: e })
               }
@@ -84,6 +86,7 @@ const SignUp = () => {
               type="password"
               label="Enter password"
               containerStyle="mt-2"
+              value={formPayload.password}
               handleChangeText={(e) =>
                 setFormPayload({ ...formPayload, password: e })
               }
@@ -92,6 +95,7 @@ const SignUp = () => {
               type="password"
               label="Confirm password"
               containerStyle="mt-2"
+              value={formPayload.passwordConfirmation}
               handleChangeText={(e) =>
                 setFormPayload({ ...formPayload, passwordConfirmation: e })
               }
