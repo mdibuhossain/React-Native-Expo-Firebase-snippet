@@ -3,7 +3,6 @@ import React from "react";
 import { Tabs } from "expo-router";
 
 import { icons } from "../../constants";
-import GlobalProvider from "../../context/GlobalProvider";
 
 const TabIcon = ({ icon, color, name, focused }) => {
   return (

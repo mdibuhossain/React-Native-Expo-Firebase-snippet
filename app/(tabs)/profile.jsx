@@ -23,12 +23,13 @@ import { FlashList } from "@shopify/flash-list";
 import CustomInpurField from "../../components/CustomInpurField";
 
 const Profile = () => {
-  const { user, setIsLoading, isLoading, setTrigger, setUser } =
+  const { user, setIsLoading, isLoading, setTrigger, trigger, setUser } =
     useGlobalContext();
   const [isLoadingForPhoto, setIsLoadingForPhoto] = React.useState(false);
   const [isLoadingForName, setIsLoadingForName] = React.useState(false);
   const [isLoadingForEmailVerify, setIsLoadingForEmailVerify] =
     React.useState(false);
+  const [isLoadingLocal, setIsLoadingLocal] = React.useState(false);
 
   const handleUpdateFullName = async (newName) => {
     setIsLoadingForName(true);
@@ -91,10 +92,15 @@ const Profile = () => {
     setUser(null);
   };
 
-  const onRefresh = React.useCallback(() => {
+  const onRefresh = () => {
     setIsLoading(true);
-    setTrigger((prev) => !prev);
-  });
+  };
+
+  React.useEffect(() => {
+    if (isLoading) {
+      setTrigger(!trigger);
+    }
+  }, [isLoading]);
 
   const items = [
     {
