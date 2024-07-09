@@ -8,7 +8,8 @@ export const useGlobalContext = () => useContext(GlobalContext);
 const GlobalProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [trigger, setTrigger] = useState(false);
   const [error, setError] = useState(null);
 
   const checkUser = onAuthStateChanged(auth, (user) => {
@@ -24,11 +25,21 @@ const GlobalProvider = ({ children }) => {
 
   useEffect(() => {
     return () => checkUser();
-  }, [auth]);
+  }, [auth, trigger]);
 
   return (
     <GlobalContext.Provider
-      value={{ isLoading, user, isLoggedIn, error, checkUser, setUser }}
+      value={{
+        user,
+        error,
+        setUser,
+        trigger,
+        checkUser,
+        isLoading,
+        isLoggedIn,
+        setTrigger,
+        setIsLoading,
+      }}
     >
       {children}
     </GlobalContext.Provider>

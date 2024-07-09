@@ -1,4 +1,11 @@
-import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  RefreshControl,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React from "react";
 import CustomButton from "../../components/CustomButton";
 import {
@@ -8,7 +15,6 @@ import {
   verifyEmail,
 } from "../../lib/firebaseService";
 import { useGlobalContext } from "../../context/GlobalProvider";
-import ScreenLayout from "../../components/ScreenLayout";
 import { images, svgs } from "../../constants";
 import FeatherIcons from "@expo/vector-icons/Feather";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
@@ -17,7 +23,8 @@ import { FlashList } from "@shopify/flash-list";
 import CustomInpurField from "../../components/CustomInpurField";
 
 const Profile = () => {
-  const { user, isLoading, setUser } = useGlobalContext();
+  const { user, setIsLoading, isLoading, setTrigger, setUser } =
+    useGlobalContext();
   const [isLoadingForPhoto, setIsLoadingForPhoto] = React.useState(false);
   const [isLoadingForName, setIsLoadingForName] = React.useState(false);
   const [isLoadingForEmailVerify, setIsLoadingForEmailVerify] =
@@ -34,6 +41,7 @@ const Profile = () => {
       }
     } catch (error) {
       alert(error.message);
+    } finally {
       setIsLoadingForName(false);
     }
   };
@@ -82,6 +90,11 @@ const Profile = () => {
     await logOut();
     setUser(null);
   };
+
+  const onRefresh = React.useCallback(() => {
+    setIsLoading(true);
+    setTrigger((prev) => !prev);
+  });
 
   const items = [
     {
@@ -254,9 +267,17 @@ const Profile = () => {
             paddingLeft: 10,
             paddingRight: 10,
             paddingBottom: 10,
+            paddingTop: 10,
           }}
           ListHeaderComponent={listHeaderComponent}
           keyExtractor={(_, index) => index.toString()}
+          refreshControl={
+            <RefreshControl
+              refreshing={isLoading}
+              onRefresh={onRefresh}
+              colors={["#FF9C01"]}
+            />
+          }
         />
       </View>
     </View>
